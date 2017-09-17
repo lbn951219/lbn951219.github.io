@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>高德</title>
+		<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.0&key=cefc397d2f351522bbf0bbad6a10843f"></script>
+		<!--<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+		<script src="http://cache.amap.com/lbs/static/es5.min.js"></script>
+		<link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />-->
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--<link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />-->
+		<style type="text/css">
+		#container{
+			height: 800px;
+		}
+		</style>
+	</head>
+
+	<body>
+		<div id="container" class="map" tabindex="0"></div>
+		<div class='button-group' style="background-color: #0d9bf2">
+			<input type='checkbox' onclick='qaq()' checked name='bg'>背景
+			<input type='checkbox' onclick='qaq()' checked name='road'>道路
+			<input type='checkbox' onclick='qaq()' checked name='building'>建筑物
+			<input type='checkbox' onclick='qaq()' checked name='point'>标注
+		</div>
+
+	</body>
+	<script type="text/javascript">
+		//增加 pitch 属性可以修改地图的初始俯仰角度，俯仰角的有效范围为0度－83度。
+		//自定义地图
+		//官方模板
+		/*
+		 * normal:标准  默认值
+		 * whitesmoke:远山黛 
+		 * macaron:马卡龙
+		 * graffiti:涂鸦
+		 * darkblue:极夜蓝
+		 */
+		var map = new AMap.Map('container', {
+			resizeEnable: true,
+			zoom: 15, //初始缩放比例
+			center: [113.21, 35.24], //初始中心点  北京
+			pitch: 35, //倾斜程度
+			mapStyle: 'amap://styles/normal', //样式URL
+			viewMode: '3D', //支持3D
+			zooms: [3, 20] //支持的缩放级别范围
+		});
+		//类似箭头标记
+		var marker = new AMap.Marker({
+			position: [113.21, 35.24], //marker所在的位置
+			map: map //创建时直接赋予map属性
+		});
+		//也可以在创建完成后通过setMap方法执行地图对象
+		marker.setMap(map);
+		//地图控件  1.工具条 ToolBar 集成了缩放、平移、定位等功能按钮在内的组合控件
+		//2.比例尺 Scale 展示地图在当前层级和纬度下的比例尺
+		//3.定位 Geolocation 用来获取和展示用户主机所在的经纬度位置
+		//4.鹰眼 OverView 在地图右下角显示地图的缩略图
+		//5.类别切换 MapType 实现默认图层与卫星图、实施交通图层之间切换的控
+		AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.OverView', 'AMap.Geolocation'],
+			function() {
+				map.addControl(new AMap.ToolBar());
+				map.addControl(new AMap.Scale({
+					//可以隐藏和显示可以调用相应的方法,hide()和show()
+					//控件位置:position LT左上角  RT右上角 LB左下角   RB右下角 默认位置LB
+//					offset:new AMap.Pixel(30,60),
+					position:"RT"
+				}));
+				map.addControl(new AMap.Geolocation());
+				map.addControl(new AMap.OverView({
+					isOpen: true
+				}));
+			});
+		//可以隐藏某些东西来突出显示自己想要表现的事物
+		function qaq() {
+			var boxes = document.getElementsByTagName('input');
+			var features = [];
+			for (var i = 0; i < boxes.length; i += 1) {
+				if (boxes[i].checked == true) {
+					features.push(boxes[i].name);
+				}
+			}
+			map.setFeatures(features);
+		}
+		//圆Circle、多边形Polygon、折线Polyline、右键菜单ContextMenu等。除信息窗体和右键菜单之外，这些覆盖物都可以使用setMap方法添加到地图或者从地图上移除，使用setMap()可以将覆盖物从地图中移除
+		var circle = new AMap.Circle({
+			center: [113.21, 35.24],
+			radius: 100,
+			fillOpacity: 0.2,
+			strokeWeight: 1
+		})
+		circle.setMap(map);
+		map.setFitView()
+		var info = new AMap.InfoWindow({
+			content: "QAQ<br>OVO",
+			offset: new AMap.Pixel(0, -28)
+		})
+		info.open(map, marker.getPosition())
+
+	</script>
+
+</html>
